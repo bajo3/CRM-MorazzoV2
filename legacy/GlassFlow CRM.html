@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facundo Morazzo Aberturas y Cristales — CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="fm-logo.jsx"></script>
+<script type="text/babel" src="gf-data.jsx"></script>
+<script type="text/babel" src="gf-ui.jsx"></script>
+<script type="text/babel" src="gf-dashboard.jsx"></script>
+<script type="text/babel" src="gf-trabajos.jsx"></script>
+<script type="text/babel" src="gf-fabrica.jsx"></script>
+<script type="text/babel" src="gf-monitor.jsx"></script>
+<script type="text/babel" src="gf-ventas.jsx"></script>
+<script type="text/babel" src="gf-admin.jsx"></script>
+<script type="text/babel" src="gf-pdf.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body, #root { height: 100%; width: 100%; overflow: hidden; }
+  body { font-family: 'DM Sans', sans-serif; background: #f1f5f9; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  * { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+  button { font-family: 'DM Sans', sans-serif; }
+  input, select, textarea { font-family: 'DM Sans', sans-serif; }
+
+  @media print {
+    #app-shell { display: none; }
+    #print-frame { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "companyName": "Facundo Morazzo",
+  "companySubtitle": "Aberturas y Cristales",
+  "primaryColor": "#1a56db",
+  "sidebarDark": true,
+  "defaultSenaPct": 50,
+  "showCobranzas": true,
+  "showAgenda": true,
+  "vendedor1": "Lucía R.",
+  "vendedor2": "Martín G."
+}/*EDITMODE-END*/;
+
+/* ── PRINT ORDER VIEW ── */
+const PrintOrder = ({ trabajo, cliente, onClose }) => {
+  if (!trabajo) return null;
+  const now = new Date().toLocaleDateString('es-AR');
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.6)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ background: '#fff', borderRadius: 12, width: 620, maxHeight: '90vh', overflow: 'auto', boxShadow: '0 25px 60px rgba(0,0,0,.3)' }}>
+        {/* Print content */}
+        <div style={{ padding: '32px 36px' }} id="print-content">
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 16, borderBottom: '2px solid #1a56db' }}>
+            <FMLogoFull />
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: 'Space Grotesk,sans-serif', fontSize: 22, fontWeight: 700, color: '#0f172a' }}>ORDEN DE PRODUCCIÓN</div>
+              <div style={{ fontFamily: 'Space Grotesk,sans-serif', fontSize: 18, color: '#1a56db', fontWeight: 600 }}>#{trabajo.id}</div>
+              <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, color: '#64748b', marginTop: 4 }}>Emitida: {now}</div>
+            </div>
+          </div>
+
+          {/* Client + specs */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
+            <div style={{ background: '#f8fafc', borderRadius: 8, padding: '14px 16px' }}>
+              <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Cliente</div>
+              <div style={{ fontFamily: 'Space Grotesk,sans-serif', fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>{cliente?.nombre}</div>
+              {[['Tel', cliente?.tel], ['Dir', cliente?.direccion], ['Localidad', cliente?.localidad]].map(([k,v]) => v ? (
+                <div key={k} style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, color: '#64748b' }}><strong>{k}:</strong> {v}</div>
+              ) : null)}
+            </div>
+            <div style={{ background: '#f8fafc', borderRadius: 8, padding: '14px 16px' }}>
+              <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Detalles de la orden</div>
+              {[['Rubro', trabajo.rubro],['Fábrica', trabajo.fabrica],['Fecha entrega', fdate(trabajo.fechaPromesa)],['Prioridad', trabajo.prioridad],['Vendedor', trabajo.vendedor]].map(([k,v]) => (
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'DM Sans,sans-serif', fontSize: 12, padding: '3px 0', borderBottom: '1px solid #e2e8f0' }}>
+                  <span style={{ color: '#64748b' }}>{k}</span><span style={{ fontWeight: 600, color: '#0f172a' }}>{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div style={{ background: '#f8fafc', borderRadius: 8, padding: '14px 16px', marginBottom: 20 }}>
+            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Descripción del trabajo</div>
+            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 14, color: '#0f172a', lineHeight: 1.5 }}>{trabajo.descripcion}</div>
+          </div>
+
+          {/* Medidas */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 20 }}>
+            {[['Medidas', trabajo.medidas],['Cantidad', trabajo.cantidad],['Color', trabajo.color || '—'],['Fábrica asignada', trabajo.fabrica === 'PVC' ? '🏭 Aberturas PVC' : '🪟 Vidrios/DVH']].map(([k,v]) => (
+              <div key={k} style={{ background: '#f8fafc', borderRadius: 8, padding: '10px 12px', textAlign: 'center' }}>
+                <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, color: '#64748b', marginBottom: 4, textTransform: 'uppercase', letterSpacing: .5 }}>{k}</div>
+                <div style={{ fontFamily: 'Space Grotesk,sans-serif', fontSize: 14, fontWeight: 700, color: '#0f172a' }}>{v}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Observations */}
+          {trabajo.obs && (
+            <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '12px 14px', marginBottom: 20 }}>
+              <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, fontWeight: 700, color: '#92400e', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Observaciones</div>
+              <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: '#78350f', lineHeight: 1.5 }}>{trabajo.obs}</div>
+            </div>
+          )}
+
+          {/* Financial */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 24 }}>
+            {[['Total', money(trabajo.total), '#0f172a'],['Seña cobrada', money(trabajo.sena), '#16a34a'],['Saldo pendiente', money(trabajo.saldo), trabajo.saldo > 0 ? '#ea580c' : '#16a34a']].map(([k,v,col]) => (
+              <div key={k} style={{ background: '#f8fafc', borderRadius: 8, padding: '12px 14px', textAlign: 'center' }}>
+                <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, color: '#64748b', marginBottom: 4, textTransform: 'uppercase', letterSpacing: .5 }}>{k}</div>
+                <div style={{ fontFamily: 'Space Grotesk,sans-serif', fontSize: 16, fontWeight: 700, color: col }}>{v}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Signature */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginTop: 32 }}>
+            {['Fábrica recibe', 'Vendedor'].map(label => (
+              <div key={label} style={{ borderTop: '1px solid #cbd5e1', paddingTop: 8, textAlign: 'center' }}>
+                <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 11, color: '#94a3b8' }}>{label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: 20, paddingTop: 12, borderTop: '1px solid #e2e8f0', textAlign: 'center' }}>
+            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 10, color: '#94a3b8' }}>Facundo Morazzo Aberturas y Cristales · Sistema GlassFlow CRM</div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div style={{ display: 'flex', gap: 8, padding: '12px 24px', borderTop: '1px solid #e2e8f0', justifyContent: 'flex-end', background: '#f8fafc', borderRadius: '0 0 12px 12px' }}>
+          <Btn variant="ghost" onClick={onClose}>Cerrar</Btn>
+          <Btn variant="default" icon="🖨" onClick={() => window.print()}>Imprimir</Btn>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── TWEAKS PANEL ── */
+const AppTweaks = ({ tweaks, setTweak }) => (
+  <TweaksPanel>
+    <TweakSection title="Empresa">
+      <TweakText id="companyName" label="Nombre" value={tweaks.companyName} onChange={v => setTweak('companyName', v)} />
+      <TweakText id="companySubtitle" label="Subtítulo" value={tweaks.companySubtitle} onChange={v => setTweak('companySubtitle', v)} />
+      <TweakText id="vendedor1" label="Vendedor 1" value={tweaks.vendedor1} onChange={v => setTweak('vendedor1', v)} />
+      <TweakText id="vendedor2" label="Vendedor 2" value={tweaks.vendedor2} onChange={v => setTweak('vendedor2', v)} />
+    </TweakSection>
+    <TweakSection title="Apariencia">
+      <TweakColor id="primaryColor" label="Color principal" value={tweaks.primaryColor} onChange={v => setTweak('primaryColor', v)} />
+      <TweakToggle id="sidebarDark" label="Sidebar oscuro" value={tweaks.sidebarDark} onChange={v => setTweak('sidebarDark', v)} />
+    </TweakSection>
+    <TweakSection title="Módulos">
+      <TweakToggle id="showCobranzas" label="Mostrar Cobranzas" value={tweaks.showCobranzas} onChange={v => setTweak('showCobranzas', v)} />
+      <TweakToggle id="showAgenda" label="Mostrar Agenda" value={tweaks.showAgenda} onChange={v => setTweak('showAgenda', v)} />
+    </TweakSection>
+    <TweakSection title="Presupuestos">
+      <TweakSlider id="defaultSenaPct" label="Seña por defecto (%)" value={tweaks.defaultSenaPct} min={10} max={80} step={5} onChange={v => setTweak('defaultSenaPct', v)} />
+    </TweakSection>
+  </TweaksPanel>
+);
+
+/* ── MAIN APP ── */
+const App = () => {
+  const [screen, setScreen] = React.useState('dashboard');
+  const [monitorOpen, setMonitorOpen] = React.useState(false);
+  const [printData, setPrintData] = React.useState(null);
+  const { tweaks: rawTweaks, setTweak } = useTweaks(TWEAK_DEFAULTS);
+  const tweaks = rawTweaks || TWEAK_DEFAULTS;
+
+  const handleNav = (id) => {
+    if (id === 'monitor') { setMonitorOpen(true); return; }
+    setScreen(id);
+  };
+
+  const navItems = NAV.filter(n => {
+    if (n.id === 'cobranzas' && !tweaks.showCobranzas) return false;
+    if (n.id === 'agenda' && !tweaks.showAgenda) return false;
+    return true;
+  });
+
+  const renderScreen = () => {
+    switch (screen) {
+      case 'dashboard':    return <Dashboard onNav={handleNav} onPrint={setPrintData} />;
+      case 'clientes':     return <Clientes />;
+      case 'presupuestos': return <Presupuestos />;
+      case 'trabajos':     return <Trabajos onNav={handleNav} onPrint={setPrintData} />;
+      case 'fabrica-pvc':  return <FabricaPVC onMonitor={() => setMonitorOpen(true)} />;
+      case 'fabrica-vid':  return <FabricaVidrios onMonitor={() => setMonitorOpen(true)} />;
+      case 'agenda':       return <Agenda />;
+      case 'cobranzas':    return <Cobranzas />;
+      default:             return <Dashboard onNav={handleNav} />;
+    }
+  };
+
+  return (
+    <div id="app-shell" style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+      {/* Custom sidebar with tweakable nav */}
+      <div style={{ width: 220, background: tweaks.sidebarDark ? '#0f172a' : '#1a56db', display: 'flex', flexDirection: 'column', height: '100%', flexShrink: 0 }}>
+        {/* Logo */}
+        <div style={{ padding: '16px 16px 14px', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+          <FMLogo size={34} showText={true} textSize="sm" />
+        </div>
+        {/* Nav */}
+        <nav style={{ flex: 1, padding: '8px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {navItems.map(item => {
+            const isActive = screen === item.id || (item.id === 'monitor' && monitorOpen);
+            const isMonitor = item.id === 'monitor';
+            return (
+              <button key={item.id} onClick={() => handleNav(item.id)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 8, border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%', background: isActive ? 'rgba(59,130,246,.18)' : 'transparent', borderLeft: `2px solid ${isActive ? tweaks.primaryColor : 'transparent'}`, transition: 'all .15s' }}>
+                <span style={{ fontSize: 14, color: isActive ? tweaks.primaryColor : '#64748b', flexShrink: 0 }}>{item.icon}</span>
+                <span style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, fontWeight: isActive ? 600 : 400, color: isActive ? '#fff' : '#94a3b8' }}>{item.label}</span>
+                {item.id === 'dashboard' && GF_DATA.alertas.length > 0 && (
+                  <span style={{ marginLeft: 'auto', background: '#dc2626', color: '#fff', borderRadius: 10, padding: '1px 6px', fontSize: 10, fontWeight: 700 }}>{GF_DATA.alertas.length}</span>
+                )}
+                {isMonitor && <span style={{ marginLeft: 'auto', background: 'rgba(59,130,246,.2)', color: '#60a5fa', borderRadius: 4, padding: '0 5px', fontSize: 9, fontWeight: 600 }}>TV</span>}
+              </button>
+            );
+          })}
+        </nav>
+        {/* User */}
+        <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,.08)', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 30, height: 30, borderRadius: '50%', background: `linear-gradient(135deg,${tweaks.primaryColor},#7c3aed)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#fff', fontWeight: 700, flexShrink: 0 }}>FM</div>
+          <div>
+            <div style={{ color: '#e2e8f0', fontFamily: 'DM Sans,sans-serif', fontSize: 12, fontWeight: 500 }}>{tweaks.companyName}</div>
+            <div style={{ color: '#64748b', fontSize: 10 }}>{tweaks.companySubtitle}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        {renderScreen()}
+      </div>
+
+      {monitorOpen && <Monitor onClose={() => setMonitorOpen(false)} />}
+      {printData && <PrintOrder trabajo={printData} cliente={GF_DATA.clientes.find(c => c.id === printData.clienteId)} onClose={() => setPrintData(null)} />}
+      <AppTweaks tweaks={tweaks} setTweak={setTweak} />
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

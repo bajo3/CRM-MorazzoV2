@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(ConvertTo-Csv -NoTypeInformation)",
+      "Bash(Measure-Object -Line)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(Remove-Item *)",
+      "WebFetch(domain:github.com)",
+      "PowerShell(npm *)",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; npx agent-browser doctor 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; npx skills add vercel-labs/agent-browser 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; npx skills add vercel-labs/agent-browser --yes 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; .\\\\node_modules\\\\.bin\\\\agent-browser open https://example.com 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(New-Item *)",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; .\\\\node_modules\\\\.bin\\\\agent-browser snapshot 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(Start-Sleep -Seconds 4; .\\\\node_modules\\\\.bin\\\\agent-browser open http://localhost:5173 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(.\\\\node_modules\\\\.bin\\\\agent-browser snapshot 2>&1)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(.\\\\node_modules\\\\.bin\\\\agent-browser close 2>&1; .\\\\node_modules\\\\.bin\\\\agent-browser open http://localhost:5174 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; .\\\\node_modules\\\\.bin\\\\agent-browser close 2>&1; .\\\\node_modules\\\\.bin\\\\agent-browser open http://localhost:5175 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; .\\\\node_modules\\\\.bin\\\\agent-browser open http://localhost:5175 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "Bash(npx vite *)",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; .\\\\node_modules\\\\.bin\\\\agent-browser close 2>&1; .\\\\node_modules\\\\.bin\\\\agent-browser open http://localhost:5299 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "PowerShell(Start-Sleep -Seconds 2; Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; .\\\\node_modules\\\\.bin\\\\agent-browser open http://localhost:5299 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
+      "Skill(agent-browser)",
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__apply_migration"
+    ]
+  }
+}
