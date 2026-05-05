@@ -2,6 +2,7 @@ import type { EstadoTrabajo, FabricaAsignada, RubroTrabajo, Trabajo } from "../t
 
 export const pvcFlow: EstadoTrabajo[] = ["recibido", "medicion", "preparacion", "terminado"];
 export const vidrioFlow: EstadoTrabajo[] = ["recibido", "preparacion", "terminado"];
+export const colocacionesFlow: EstadoTrabajo[] = ["pendiente", "coordinado", "en_camino", "colocado"];
 
 export const getFactoryForRubro = (rubro: RubroTrabajo): FabricaAsignada => {
   if (rubro === "pvc") return "pvc";
@@ -10,6 +11,7 @@ export const getFactoryForRubro = (rubro: RubroTrabajo): FabricaAsignada => {
 
 export const getFlowForFactory = (factory: FabricaAsignada): EstadoTrabajo[] => {
   if (factory === "pvc") return pvcFlow;
+  if (factory === "colocaciones") return colocacionesFlow;
   return vidrioFlow;
 };
 
@@ -25,6 +27,7 @@ export const normalizeFactory = (factory: unknown, rubro: RubroTrabajo): Fabrica
   const value = String(factory || "").toLowerCase();
   if (value === "vidrios") return "vidrios";
   if (value === "pvc") return "pvc";
+  if (value === "colocaciones") return "colocaciones";
   return getFactoryForRubro(rubro);
 };
 
@@ -65,7 +68,7 @@ export const ensureEstadoForFactory = (factory: FabricaAsignada, state: EstadoTr
   if (state === "listo" || state === "entregado") {
     return "terminado";
   }
-  if (state === "colocado") return "terminado";
+  if (state === "colocado" && factory !== "colocaciones") return "terminado";
   if (state === "cerrado" || state === "cancelado") return state;
   return flow.includes(state) ? state : flow[0];
 };
@@ -111,6 +114,7 @@ export const rubroLabels: Record<RubroTrabajo, string> = {
 export const fabricaLabels: Record<FabricaAsignada, string> = {
   pvc: "Aberturas",
   vidrios: "Cristales",
+  colocaciones: "Colocaciones",
 };
 
 export const priorityLabels = {

@@ -241,7 +241,7 @@ const MonitorCard = ({
     >
       <div className="flex items-start justify-between gap-4" {...attributes} {...listeners}>
         <div className="min-w-0">
-          <p className="font-display text-xl font-black leading-tight text-white">{client?.nombre || "Cliente"}</p>
+          <p className="font-display text-xl font-black leading-tight text-white">{client?.nombre || "Sin cliente"}</p>
           <p className="mt-1 text-sm font-semibold text-slate-400">{job.medidas || "Sin medidas"}</p>
         </div>
         <Badge value={job.prioridad} />
@@ -288,7 +288,7 @@ const MonitorCard = ({
 
 const MonitorDragOverlay = ({ job, snapshot }: { job: Trabajo; snapshot: CrmDataSnapshot }) => (
   <div className="w-[360px] rotate-1 rounded-2xl border-2 border-brand-300 bg-slate-900 p-5 shadow-2xl">
-    <p className="font-display text-2xl font-black text-white">{snapshot.clientes.find((item) => item.id === job.clienteId)?.nombre || "Cliente"}</p>
+    <p className="font-display text-2xl font-black text-white">{snapshot.clientes.find((item) => item.id === job.clienteId)?.nombre || "Sin cliente"}</p>
     <p className="mt-2 text-lg font-semibold text-slate-300">{job.descripcion || job.titulo}</p>
     <p className="mt-3 text-base text-slate-400">{job.medidas}</p>
   </div>

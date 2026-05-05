@@ -28,7 +28,11 @@
       "PowerShell(Start-Sleep -Seconds 2; Set-Location \"C:\\\\Users\\\\felip\\\\Desktop\\\\Feli Web\\\\CRM-MorazzoV2\"; .\\\\node_modules\\\\.bin\\\\agent-browser open http://localhost:5299 2>&1; Write-Host \"EXIT:$LASTEXITCODE\")",
       "Skill(agent-browser)",
       "mcp__claude_ai_Supabase__list_projects",
-      "mcp__claude_ai_Supabase__apply_migration"
+      "mcp__claude_ai_Supabase__apply_migration",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(netstat -ano)",
+      "Bash(node -e \"require.resolve\\('lucide-react'\\)\")"
     ]
   }
 }

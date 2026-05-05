@@ -46,6 +46,14 @@ export const AgendaView = ({
             </tr>
           </thead>
           <tbody>
+            {snapshot.agenda.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-4 py-12 text-center">
+                  <p className="text-sm font-semibold text-slate-500">Sin eventos programados</p>
+                  <p className="mt-1 text-xs text-slate-400">Creá el primero con el botón "Nuevo evento".</p>
+                </td>
+              </tr>
+            )}
             {snapshot.agenda.map((event) => (
               <tr key={event.id} className="border-t border-slate-100">
                 <td className="px-4 py-4">

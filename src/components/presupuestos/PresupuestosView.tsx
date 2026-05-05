@@ -181,10 +181,7 @@ const PresupuestoModal = ({
     items: presupuesto?.items || [emptyItem()],
     trabajoId: presupuesto?.trabajoId,
   });
-  const [clientSearch, setClientSearch] = useState("");
-  const filteredClients = clients
-    .filter((client) => `${client.nombre} ${client.telefono} ${client.localidad}`.toLowerCase().includes(clientSearch.toLowerCase()))
-    .slice(0, 40);
+  const filteredClients = clients.slice(0, 40);
   const subtotal = roundMoney(form.items.reduce((sum, item) => sum + item.subtotal, 0));
   const descuentoMonto = roundMoney(subtotal * (Math.max(form.descuento, 0) / 100));
   const total = roundMoney(Math.max(subtotal - descuentoMonto, 0));
@@ -222,7 +219,6 @@ const PresupuestoModal = ({
       >
         <div className="grid gap-4 md:grid-cols-3">
           <Field label="Cliente">
-            <Input value={clientSearch} onChange={(event) => setClientSearch(event.target.value)} placeholder="Buscar por nombre, telefono o localidad" />
             <Select value={form.clienteId} onChange={(event) => setForm((current) => ({ ...current, clienteId: event.target.value }))}>
               <option value="">Seleccionar cliente</option>
               {filteredClients.map((client) => (

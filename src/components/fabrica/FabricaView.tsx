@@ -189,7 +189,7 @@ const DraggableJobCard = ({
       </div>
       <p className="mt-2 text-xs text-slate-600 line-clamp-2">{job.descripcion}</p>
       <p className="mt-1.5 text-xs text-slate-400">{job.medidas} · {job.cantidad} un. · {formatDate(job.fechaPrometida)}</p>
-      {job.estadoProduccion === "terminado" ? (
+      {!next ? (
         <Button
           variant="success"
           className="mt-3 w-full !text-xs !h-8"

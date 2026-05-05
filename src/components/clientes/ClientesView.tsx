@@ -80,7 +80,10 @@ export const ClientesView = ({
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-medium text-neutral-950">{client.nombre}</span>
-                  <span className="font-display font-bold text-red-700">{formatMoney(balanceByClient(snapshot, client.id))}</span>
+                  <div className="text-right">
+                    <p className="font-display font-bold text-red-700">{formatMoney(balanceByClient(snapshot, client.id))}</p>
+                    <p className="text-[10px] text-zinc-400">Saldo pendiente</p>
+                  </div>
                 </div>
                 <p className="text-sm text-zinc-500">{client.localidad || "Sin localidad"}</p>
               </button>

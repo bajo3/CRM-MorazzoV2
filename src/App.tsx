@@ -276,11 +276,12 @@ export default function App() {
       ventas: { title: "Clientes", subtitle: "Cartera de clientes y seguimiento comercial" },
       presupuestos: { title: "Presupuestos", subtitle: "Cotizaciones, items y conversion a trabajo" },
       trabajos: { title: "Trabajos", subtitle: "Ordenes, kanban e historial" },
-      "fabrica-pvc": { title: "Aberturas", subtitle: "Recibido, medicion, preparacion y colocacion" },
+      "fabrica-pvc": { title: "Aberturas", subtitle: "Recibido, medicion, preparacion y terminado" },
       "fabrica-vidrios": { title: "Cristales", subtitle: "Recibido, preparacion y terminado" },
+      "fabrica-colocaciones": { title: "Colocaciones", subtitle: "Pendiente, coordinado, en camino y colocado" },
       monitor: { title: "Monitor TV", subtitle: "Pantalla operativa de produccion" },
       agenda: { title: "Agenda", subtitle: "Eventos vinculados a clientes y trabajos" },
-      caja: { title: "Caja", subtitle: "Ingresos, salidas y movimientos del dia" },
+      caja: { title: "Caja", subtitle: "Movimientos, balance y flujo de caja" },
     };
 
       const page = (() => {
@@ -317,6 +318,8 @@ export default function App() {
           return <FabricaView snapshot={snapshot} factory="pvc" title="Aberturas" onAdvance={updateTrabajoState} onArchive={archiveTrabajo} />;
         case "fabrica-vidrios":
           return <FabricaView snapshot={snapshot} factory="vidrios" title="Cristales" onAdvance={updateTrabajoState} onArchive={archiveTrabajo} />;
+        case "fabrica-colocaciones":
+          return <FabricaView snapshot={snapshot} factory="colocaciones" title="Colocaciones" onAdvance={updateTrabajoState} onArchive={archiveTrabajo} />;
         case "monitor":
           return <MonitorView snapshot={snapshot} onAdvance={updateTrabajoState} onArchive={archiveTrabajo} />;
         case "agenda":
@@ -348,7 +351,7 @@ export default function App() {
   }, [screen, snapshot, error]);
 
   return (
-    <div className="min-h-screen md:grid md:grid-cols-[248px_1fr]">
+    <div className="flex min-h-screen flex-col md:grid md:grid-cols-[248px_1fr]">
       <Sidebar current={screen} onChange={setScreen} />
       <main className="min-h-screen overflow-auto">{content}</main>
     </div>

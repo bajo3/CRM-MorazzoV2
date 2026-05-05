@@ -370,7 +370,7 @@ export const mockData: CrmDataSnapshot = {
       clienteId: "CLI-1003",
       titulo: "Colocacion mamparas hotel",
       rubro: "vidrio",
-      fabricaAsignada: "vidrios",
+      fabricaAsignada: "colocaciones",
       descripcion: "Instalacion de 4 mamparas en habitaciones remodeladas.",
       medidas: "4 unidades",
       cantidad: 1,

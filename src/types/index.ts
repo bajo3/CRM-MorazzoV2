@@ -21,7 +21,7 @@ export type EstadoTrabajo =
   | "cancelado";
 
 export type RubroTrabajo = "pvc" | "vidrio";
-export type FabricaAsignada = "pvc" | "vidrios";
+export type FabricaAsignada = "pvc" | "vidrios" | "colocaciones";
 export type TipoFabrica = RubroTrabajo;
 export type PrioridadTrabajo = "normal" | "media" | "alta" | "urgente";
 export type EstadoComercial = "consulta" | "presupuestado" | "aprobado" | "en_produccion" | "listo" | "entregado" | "cancelado";
