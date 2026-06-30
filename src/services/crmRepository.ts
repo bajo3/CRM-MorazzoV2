@@ -1,10 +1,7 @@
-import { mockData } from "../data/mockData";
 import { roundMoney } from "../lib/money";
-import { hasSupabaseEnv, supabaseConfigError } from "../lib/supabase";
 import { activeProductionStates, archivedProductionStates, ensureEstadoForFactory, normalizeFactory, normalizeRubroTrabajo } from "../lib/workflow";
 import type { Cliente, CrmDataSnapshot, DashboardStats, Pago, Presupuesto, Trabajo } from "../types";
-import { createLocalStorageRepository } from "./localStorageRepository";
-import { createSupabaseRepository } from "./supabaseRepository";
+import { createSheetsCrmRepository } from "./sheetsCrmRepository";
 
 export interface CrmRepository {
   getSnapshot(): Promise<CrmDataSnapshot>;
@@ -160,22 +157,4 @@ export const getDashboardStats = (snapshot: CrmDataSnapshot): DashboardStats => 
   };
 };
 
-export const createCrmRepository = (): CrmRepository => {
-  if (hasSupabaseEnv && supabaseConfigError) {
-    const message = supabaseConfigError;
-    return {
-      async getSnapshot() {
-        throw new Error(message);
-      },
-      async saveSnapshot() {
-        throw new Error(message);
-      },
-    };
-  }
-
-  const supabaseRepository = createSupabaseRepository();
-  if (supabaseRepository.isEnabled) {
-    return supabaseRepository.repository;
-  }
-  return createLocalStorageRepository(mockData);
-};
+export const createCrmRepository = (): CrmRepository => createSheetsCrmRepository();

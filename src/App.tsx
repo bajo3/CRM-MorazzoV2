@@ -7,6 +7,7 @@ import { FabricaView } from "./components/fabrica/FabricaView";
 import { Sidebar, type Screen } from "./components/layout/Sidebar";
 import { PageHeader } from "./components/layout/PageHeader";
 import { MonitorView } from "./components/monitor/MonitorView";
+import { ObrasControlView } from "./components/obras/ObrasControlView";
 import { PresupuestosView } from "./components/presupuestos/PresupuestosView";
 import { TrabajosView } from "./components/trabajos/TrabajosView";
 import { createId } from "./lib/ids";
@@ -72,12 +73,21 @@ export default function App() {
   };
 
   const content = useMemo(() => {
+    if (screen === "obras") {
+      return (
+        <div className="flex min-h-screen flex-col">
+          <PageHeader title="Control de obras" subtitle="Seguimiento compartido con Google Sheets" />
+          <div className="flex-1"><ObrasControlView /></div>
+        </div>
+      );
+    }
+
     if (!snapshot) {
       return (
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
             <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-brand-600 border-t-transparent" />
-            <p className="text-sm text-slate-500">Cargando GlassFlow CRM…</p>
+            <p className="text-sm text-slate-500">Cargando el sistema...</p>
             {error ? <p className="mt-3 max-w-md rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p> : null}
           </div>
         </div>
@@ -272,16 +282,17 @@ export default function App() {
     };
 
     const titles: Record<Screen, { title: string; subtitle: string }> = {
-      dashboard: { title: "Dashboard", subtitle: "Pulso comercial y productivo" },
-      ventas: { title: "Clientes", subtitle: "Cartera de clientes y seguimiento comercial" },
-      presupuestos: { title: "Presupuestos", subtitle: "Cotizaciones, items y conversion a trabajo" },
-      trabajos: { title: "Trabajos", subtitle: "Ordenes, kanban e historial" },
-      "fabrica-pvc": { title: "Aberturas", subtitle: "Recibido, medicion, preparacion y terminado" },
-      "fabrica-vidrios": { title: "Cristales", subtitle: "Recibido, preparacion y terminado" },
-      "fabrica-colocaciones": { title: "Colocaciones", subtitle: "Pendiente, coordinado, en camino y colocado" },
-      monitor: { title: "Monitor TV", subtitle: "Pantalla operativa de produccion" },
-      agenda: { title: "Agenda", subtitle: "Eventos vinculados a clientes y trabajos" },
-      caja: { title: "Caja", subtitle: "Movimientos, balance y flujo de caja" },
+      dashboard: { title: "Inicio", subtitle: "Lo importante para trabajar hoy" },
+      ventas: { title: "Clientes", subtitle: "Datos, contactos y trabajos de cada cliente" },
+      presupuestos: { title: "Presupuestos", subtitle: "Precios, senas y aprobaciones" },
+      trabajos: { title: "Trabajos", subtitle: "Pedidos activos y estado de avance" },
+      obras: { title: "Control de obras", subtitle: "Seguimiento compartido con Google Sheets" },
+      "fabrica-pvc": { title: "Aberturas", subtitle: "Trabajos de PVC y aluminio" },
+      "fabrica-vidrios": { title: "Cristales", subtitle: "Vidrios, DVH, espejos y templados" },
+      "fabrica-colocaciones": { title: "Colocar", subtitle: "Instalaciones pendientes y coordinadas" },
+      monitor: { title: "TV taller", subtitle: "Vista simple para produccion" },
+      agenda: { title: "Agenda", subtitle: "Visitas, mediciones y colocaciones" },
+      caja: { title: "Caja", subtitle: "Entradas, salidas y saldos" },
     };
 
       const page = (() => {

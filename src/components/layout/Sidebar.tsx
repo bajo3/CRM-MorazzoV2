@@ -9,6 +9,7 @@ import {
   CalendarDays,
   Wallet,
   Hammer,
+  ClipboardList,
   Menu,
   X,
 } from "lucide-react";
@@ -19,6 +20,7 @@ export type Screen =
   | "ventas"
   | "presupuestos"
   | "trabajos"
+  | "obras"
   | "fabrica-pvc"
   | "fabrica-vidrios"
   | "fabrica-colocaciones"
@@ -29,22 +31,23 @@ export type Screen =
 type NavItem = { id: Screen; label: string; icon: React.ElementType; group: "gestion" | "produccion" | "admin" };
 
 const items: NavItem[] = [
-  { id: "dashboard",            label: "Dashboard",      icon: LayoutDashboard, group: "gestion" },
+  { id: "dashboard",            label: "Inicio",         icon: LayoutDashboard, group: "gestion" },
   { id: "ventas",               label: "Clientes",       icon: Users,           group: "gestion" },
   { id: "presupuestos",         label: "Presupuestos",   icon: FileText,        group: "gestion" },
   { id: "trabajos",             label: "Trabajos",       icon: Wrench,          group: "gestion" },
+  { id: "obras",                label: "Control de obras", icon: ClipboardList,  group: "gestion" },
   { id: "fabrica-pvc",          label: "Aberturas",      icon: Layers,          group: "produccion" },
   { id: "fabrica-vidrios",      label: "Cristales",      icon: Gem,             group: "produccion" },
-  { id: "fabrica-colocaciones", label: "Colocaciones",   icon: Hammer,          group: "produccion" },
-  { id: "monitor",              label: "Monitor TV",     icon: Tv2,             group: "produccion" },
+  { id: "fabrica-colocaciones", label: "Colocar",        icon: Hammer,          group: "produccion" },
+  { id: "monitor",              label: "TV taller",      icon: Tv2,             group: "produccion" },
   { id: "agenda",               label: "Agenda",         icon: CalendarDays,    group: "admin" },
   { id: "caja",                 label: "Caja",           icon: Wallet,          group: "admin" },
 ];
 
 const groupLabels = {
-  gestion: "Gestion",
-  produccion: "Produccion",
-  admin: "Administracion",
+  gestion: "Principal",
+  produccion: "Taller",
+  admin: "Agenda y plata",
 };
 
 const groupDot: Record<string, string> = {

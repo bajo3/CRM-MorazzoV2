@@ -97,9 +97,10 @@ export const MonitorView = ({
     <div ref={rootRef} className="min-h-screen bg-slate-950 p-4 text-white lg:p-6">
       <div className="mb-4 flex flex-col gap-4 border-b border-white/10 pb-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.28em] text-slate-500">Facundo Morazzo · GlassFlow</p>
-          <h1 className="font-display text-4xl font-bold tracking-tight text-white lg:text-5xl">Monitor de Produccion</h1>
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-500">Facundo Morazzo</p>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-white lg:text-4xl">Trabajos del taller</h1>
         </div>
+
         <div className="flex flex-wrap items-center gap-2">
           {filters.map((item) => (
             <button
@@ -108,7 +109,7 @@ export const MonitorView = ({
                 setFilter(item.id);
                 setInvalidDrop(null);
               }}
-              className={`rounded-xl px-5 py-3 text-base font-bold transition ${
+              className={`rounded-lg px-4 py-2.5 text-sm font-bold transition ${
                 filter === item.id ? "bg-brand-500 text-white shadow-lg shadow-brand-950/30" : "bg-white/8 text-slate-300 hover:bg-white/14"
               }`}
             >
@@ -116,36 +117,37 @@ export const MonitorView = ({
             </button>
           ))}
           <button
-            className="rounded-xl border border-white/15 bg-white/8 px-5 py-3 text-base font-bold text-slate-200 transition hover:bg-white/14"
+            className="rounded-lg border border-white/15 bg-white/8 px-4 py-2.5 text-sm font-bold text-slate-200 transition hover:bg-white/14"
             onClick={handleFullscreen}
           >
-            Pantalla completa
+            Ver grande
           </button>
         </div>
+
         <div className="text-left xl:text-right">
-          <p className="font-display text-5xl font-bold tabular-nums text-white lg:text-6xl">
-            {clock.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+          <p className="font-display text-4xl font-bold tabular-nums text-white lg:text-5xl">
+            {clock.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
           </p>
-          <p className="mt-1 text-lg capitalize text-slate-400">
+          <p className="mt-1 text-base capitalize text-slate-400">
             {clock.toLocaleDateString("es-AR", { weekday: "long", day: "2-digit", month: "long" })}
           </p>
         </div>
       </div>
 
       <div className="mb-4 grid gap-3 sm:grid-cols-3">
-        <StatusBox label="Ordenes activas" value={String(jobs.length)} tone="default" />
-        <StatusBox label="Vencen hoy" value={String(dueToday)} tone="warn" />
-        <StatusBox label="Atrasadas" value={String(delayed)} tone="danger" />
+        <StatusBox label="En curso" value={String(jobs.length)} tone="default" />
+        <StatusBox label="Para hoy" value={String(dueToday)} tone="warn" />
+        <StatusBox label="Atrasados" value={String(delayed)} tone="danger" />
       </div>
 
       {invalidDrop ? (
-        <div className="mb-4 rounded-xl border border-amber-300/40 bg-amber-950/60 px-5 py-3 text-lg font-bold text-amber-200">
+        <div className="mb-4 rounded-lg border border-amber-300/40 bg-amber-950/60 px-5 py-3 text-base font-bold text-amber-200">
           {invalidDrop}
         </div>
       ) : null}
 
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex gap-3 pb-3">
+        <div className="grid auto-cols-[minmax(250px,1fr)] grid-flow-col gap-3 overflow-x-auto pb-3">
           {visibleStates.map((state) => (
             <MonitorColumn
               key={state}
@@ -184,18 +186,19 @@ const MonitorColumn = ({
   return (
     <section
       ref={setNodeRef}
-      className={`min-h-[52vh] min-w-0 flex-1 rounded-2xl border bg-slate-900/95 p-3 transition ${
+      className={`min-h-[52vh] min-w-[250px] rounded-xl border bg-slate-900/95 p-3 transition ${
         isOver ? "border-brand-300 ring-4 ring-brand-400/25" : "border-white/10"
       }`}
     >
-      <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
-        <span className="text-base font-black uppercase tracking-wide text-slate-100">{stateLabels[state]}</span>
-        <span className="font-display text-3xl font-black text-white">{jobs.length}</span>
+      <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-3">
+        <span className="text-sm font-black uppercase tracking-wide text-slate-100">{stateLabels[state]}</span>
+        <span className="rounded-full bg-white/10 px-2.5 py-1 text-sm font-black text-white">{jobs.length}</span>
       </div>
-      <div className="space-y-4">
+
+      <div className="space-y-2.5">
         {jobs.length === 0 ? (
-          <div className="flex h-20 items-center justify-center rounded-xl border border-dashed border-white/10 text-sm font-semibold text-slate-600">
-            Sin ordenes
+          <div className="flex h-16 items-center justify-center rounded-lg border border-dashed border-white/10 text-sm font-semibold text-slate-600">
+            Sin trabajos
           </div>
         ) : null}
         {jobs.map((job) => (
@@ -229,56 +232,59 @@ const MonitorCard = ({
   return (
     <article
       ref={setNodeRef}
-      className={`rounded-2xl border p-5 transition ${
+      className={`rounded-lg border border-l-4 bg-slate-950/80 p-3.5 shadow-sm transition ${
         isDragging
-          ? "cursor-grabbing border-brand-300 bg-brand-950/70 opacity-40"
+          ? "cursor-grabbing border-brand-300 border-l-brand-300 opacity-40"
           : delayedJob
-          ? "cursor-grab border-red-500/70 bg-red-950/45"
+          ? "cursor-grab border-red-500/50 border-l-red-500"
           : dueTodayJob
-          ? "cursor-grab border-amber-400/70 bg-amber-950/35"
-          : "cursor-grab border-white/10 bg-slate-950/70"
+          ? "cursor-grab border-amber-400/50 border-l-amber-400"
+          : "cursor-grab border-white/10 border-l-slate-600"
       }`}
     >
-      <div className="flex items-start justify-between gap-4" {...attributes} {...listeners}>
+      <div className="flex items-start justify-between gap-3" {...attributes} {...listeners}>
         <div className="min-w-0">
-          <p className="font-display text-xl font-black leading-tight text-white">{client?.nombre || "Sin cliente"}</p>
-          <p className="mt-1 text-sm font-semibold text-slate-400">{job.medidas || "Sin medidas"}</p>
+          <p className="truncate text-base font-black leading-tight text-white">{client?.nombre || "Sin cliente"}</p>
+          <p className="mt-1 text-xs font-semibold text-slate-400">{job.medidas || "Sin medidas"}</p>
         </div>
         <Badge value={job.prioridad} />
       </div>
-      <p className="mt-3 line-clamp-3 text-base font-semibold leading-snug text-slate-200">{job.descripcion || job.titulo}</p>
-      <div className="mt-3 flex flex-wrap gap-2 text-sm">
-        <span className="rounded-lg bg-white/10 px-3 py-1.5 font-semibold text-slate-300">{job.colorMaterial || stateLabels[job.estadoProduccion]}</span>
+
+      <p className="mt-2 line-clamp-2 text-sm font-semibold leading-snug text-slate-200">{job.descripcion || job.titulo}</p>
+
+      <div className="mt-3 flex flex-wrap gap-1.5 text-xs">
+        <span className="rounded-md bg-white/8 px-2 py-1 font-semibold text-slate-300">{job.colorMaterial || stateLabels[job.estadoProduccion]}</span>
         <span
-          className={`rounded-lg px-3 py-1.5 font-black ${
+          className={`rounded-md px-2 py-1 font-black ${
             delayedJob ? "bg-red-500 text-white" : dueTodayJob ? "bg-amber-300 text-slate-950" : "bg-white/10 text-slate-300"
           }`}
         >
           {delayedJob ? "Atrasado" : dueTodayJob ? "Vence hoy" : formatDate(job.fechaPrometida)}
         </span>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-2">
+
+      <div className="mt-3 grid grid-cols-2 gap-2">
         <button
-          className="rounded-xl border border-white/15 bg-white/10 px-3 py-3 text-sm font-black text-slate-200 transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-30"
+          className="rounded-lg border border-white/15 bg-white/8 px-3 py-2 text-xs font-black text-slate-200 transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-30"
           disabled={!prev}
           onClick={() => prev && onAdvance(job.id, prev)}
         >
-          {prev ? "Anterior" : "Inicio"}
+          Volver
         </button>
         {job.estadoProduccion === "terminado" ? (
           <button
-            className="rounded-xl bg-emerald-500 px-3 py-3 text-sm font-black text-white transition hover:bg-emerald-400"
+            className="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-black text-white transition hover:bg-emerald-400"
             onClick={() => onArchive(job.id)}
           >
-            Finalizado
+            Finalizar
           </button>
         ) : (
           <button
-            className="rounded-xl bg-brand-500 px-3 py-3 text-sm font-black text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-30"
+            className="rounded-lg bg-brand-500 px-3 py-2 text-xs font-black text-white transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-30"
             disabled={!next}
             onClick={() => next && onAdvance(job.id, next)}
           >
-            {next ? "Siguiente" : "Final"}
+            Avanzar
           </button>
         )}
       </div>
@@ -287,10 +293,10 @@ const MonitorCard = ({
 };
 
 const MonitorDragOverlay = ({ job, snapshot }: { job: Trabajo; snapshot: CrmDataSnapshot }) => (
-  <div className="w-[360px] rotate-1 rounded-2xl border-2 border-brand-300 bg-slate-900 p-5 shadow-2xl">
-    <p className="font-display text-2xl font-black text-white">{snapshot.clientes.find((item) => item.id === job.clienteId)?.nombre || "Sin cliente"}</p>
-    <p className="mt-2 text-lg font-semibold text-slate-300">{job.descripcion || job.titulo}</p>
-    <p className="mt-3 text-base text-slate-400">{job.medidas}</p>
+  <div className="w-[320px] rotate-1 rounded-lg border-2 border-brand-300 bg-slate-900 p-4 shadow-2xl">
+    <p className="text-xl font-black text-white">{snapshot.clientes.find((item) => item.id === job.clienteId)?.nombre || "Sin cliente"}</p>
+    <p className="mt-2 text-sm font-semibold text-slate-300">{job.descripcion || job.titulo}</p>
+    <p className="mt-3 text-sm text-slate-400">{job.medidas}</p>
   </div>
 );
 
@@ -306,9 +312,9 @@ const StatusBox = ({
   const color = tone === "danger" ? "text-red-400" : tone === "warn" ? "text-amber-300" : "text-white";
   const border = tone === "danger" ? "border-red-500/30" : tone === "warn" ? "border-amber-400/30" : "border-white/8";
   return (
-    <div className={`rounded-2xl border bg-slate-900 px-6 py-5 ${border}`}>
-      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">{label}</p>
-      <p className={`mt-1.5 font-display text-5xl font-black ${color}`}>{value}</p>
+    <div className={`rounded-xl border bg-slate-900 px-5 py-4 ${border}`}>
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
+      <p className={`mt-1 font-display text-4xl font-black ${color}`}>{value}</p>
     </div>
   );
 };

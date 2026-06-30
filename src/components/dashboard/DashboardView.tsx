@@ -9,74 +9,77 @@ import { Card } from "../ui/Card";
 export const DashboardView = ({ snapshot }: { snapshot: CrmDataSnapshot }) => {
   const stats = getDashboardStats(snapshot);
   const nextInstallations = snapshot.agenda
-    .filter((e) => e.tipo === "instalacion" && e.estado !== "cancelado")
+    .filter((event) => event.tipo === "instalacion" && event.estado !== "cancelado")
     .sort((a, b) => compareByDateAsc(a.fecha, b.fecha))
     .slice(0, 4);
   const urgentJobs = snapshot.trabajos
-    .filter((j) => activeProductionStates.includes(j.estadoProduccion))
+    .filter((job) => activeProductionStates.includes(job.estadoProduccion))
     .sort((a, b) => {
-      const s = { urgente: 0, alta: 1, media: 2, normal: 3 };
-      return s[a.prioridad] - s[b.prioridad] || a.fechaPrometida.localeCompare(b.fechaPrometida);
+      const score = { urgente: 0, alta: 1, media: 2, normal: 3 };
+      return score[a.prioridad] - score[b.prioridad] || a.fechaPrometida.localeCompare(b.fechaPrometida);
     })
     .slice(0, 8);
 
   const byFactory: Record<string, number> = {};
-  snapshot.trabajos.forEach((j) => { byFactory[j.fabricaAsignada] = (byFactory[j.fabricaAsignada] || 0) + 1; });
+  snapshot.trabajos.forEach((job) => {
+    byFactory[job.fabricaAsignada] = (byFactory[job.fabricaAsignada] || 0) + 1;
+  });
 
   return (
     <div className="space-y-5 p-5">
-      {/* KPI row */}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Presupuestos pendientes" value={String(stats.presupuestosPendientes)} icon="📋" tone="default" />
-        <KpiCard label="En producción" value={String(stats.trabajosEnProduccion)} icon="⚙️" tone="default" />
-        <KpiCard label="Atrasados" value={String(stats.trabajosAtrasados)} icon="⚠️" tone="danger" />
-        <KpiCard label="Listos" value={String(stats.trabajosListos)} icon="✓" tone="success" />
+        <KpiCard label="Presupuestos abiertos" value={String(stats.presupuestosPendientes)} tone="default" />
+        <KpiCard label="Trabajos en curso" value={String(stats.trabajosEnProduccion)} tone="default" />
+        <KpiCard label="Atrasados" value={String(stats.trabajosAtrasados)} tone="danger" />
+        <KpiCard label="Terminados" value={String(stats.trabajosListos)} tone="success" />
       </div>
 
-      {/* Cash row */}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <CashCard label="Ingresos del mes" value={formatMoney(stats.ingresosDelMes)} icon="↑" tone="income" />
-        <CashCard label="Salidas del mes" value={formatMoney(stats.egresosDelMes)} icon="↓" tone="expense" />
-        <CashCard label="Saldo de caja" value={formatMoney(stats.saldoCaja)} icon="=" tone={stats.saldoCaja >= 0 ? "income" : "expense"} />
-        <CashCard label="Saldo por cobrar" value={formatMoney(stats.saldoPendienteTotal)} icon="$" tone="pending" />
+        <CashCard label="Entro este mes" value={formatMoney(stats.ingresosDelMes)} tone="income" />
+        <CashCard label="Salio este mes" value={formatMoney(stats.egresosDelMes)} tone="expense" />
+        <CashCard label="Caja actual" value={formatMoney(stats.saldoCaja)} tone={stats.saldoCaja >= 0 ? "income" : "expense"} />
+        <CashCard label="Por cobrar" value={formatMoney(stats.saldoPendienteTotal)} tone="pending" />
       </div>
 
-      {/* Main content */}
-      <div className="grid gap-5 xl:grid-cols-[1.3fr_0.7fr]">
-        {/* Urgent jobs table */}
+      <div className="grid gap-5 xl:grid-cols-[1.35fr_0.65fr]">
         <Card className="p-5">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-base font-bold text-slate-900">Trabajos activos</h2>
-            <span className="text-xs text-slate-400">{urgentJobs.length} visibles</span>
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="font-display text-base font-bold text-slate-900">Mirar primero</h2>
+              <p className="mt-0.5 text-sm text-slate-500">Trabajos activos ordenados por urgencia.</p>
+            </div>
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500">{urgentJobs.length}</span>
           </div>
+
           {urgentJobs.length === 0 ? (
-            <p className="py-6 text-center text-sm text-slate-400">Sin trabajos activos</p>
+            <p className="py-6 text-center text-sm text-slate-400">No hay trabajos activos.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-left text-sm">
                 <thead className="border-b border-slate-100 text-xs font-semibold uppercase tracking-wider text-slate-400">
                   <tr>
-                    <th className="pb-2.5">Orden</th>
                     <th className="pb-2.5">Cliente</th>
-                    <th className="pb-2.5">Rubro</th>
+                    <th className="pb-2.5">Trabajo</th>
                     <th className="pb-2.5">Estado</th>
-                    <th className="pb-2.5">Prometida</th>
+                    <th className="pb-2.5">Fecha</th>
                     <th className="pb-2.5">Prioridad</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {urgentJobs.map((job) => {
                     const delayed = isPastDate(job.fechaPrometida);
+                    const client = snapshot.clientes.find((item) => item.id === job.clienteId);
                     return (
                       <tr key={job.id} className="hover:bg-slate-50/60">
-                        <td className="py-2.5 font-mono text-xs text-slate-500">{job.id}</td>
-                        <td className="py-2.5 font-medium text-slate-800">{snapshot.clientes.find((c) => c.id === job.clienteId)?.nombre || "-"}</td>
-                        <td className="py-2.5"><Badge value={job.rubro} /></td>
-                        <td className="py-2.5"><Badge value={job.estadoProduccion} /></td>
-                        <td className={`py-2.5 text-xs font-semibold ${delayed ? "text-red-600" : "text-slate-600"}`}>
-                          {delayed && "⚠ "}{formatDate(job.fechaPrometida)}
+                        <td className="py-3 font-medium text-slate-900">{client?.nombre || "-"}</td>
+                        <td className="max-w-[260px] py-3 text-slate-600">
+                          <p className="line-clamp-1">{job.descripcion || job.titulo}</p>
                         </td>
-                        <td className="py-2.5"><Badge value={job.prioridad} /></td>
+                        <td className="py-3"><Badge value={job.estadoProduccion} /></td>
+                        <td className={`py-3 text-xs font-semibold ${delayed ? "text-red-600" : "text-slate-600"}`}>
+                          {delayed ? "Atrasado: " : ""}{formatDate(job.fechaPrometida)}
+                        </td>
+                        <td className="py-3"><Badge value={job.prioridad} /></td>
                       </tr>
                     );
                   })}
@@ -86,17 +89,13 @@ export const DashboardView = ({ snapshot }: { snapshot: CrmDataSnapshot }) => {
           )}
         </Card>
 
-        {/* Sidebar panels */}
         <div className="space-y-5">
           <Card className="p-5">
-            <h2 className="mb-4 font-display text-base font-bold text-slate-900">Producción por área</h2>
+            <h2 className="mb-4 font-display text-base font-bold text-slate-900">Taller</h2>
             <div className="space-y-2">
               {Object.entries(byFactory).map(([factory, count]) => (
                 <div key={factory} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${factory === "pvc" ? "bg-brand-600" : factory === "vidrios" ? "bg-cyan-500" : "bg-slate-400"}`} />
-                    <span className="text-sm font-medium text-slate-700">{fabricaLabels[factory as keyof typeof fabricaLabels] || factory}</span>
-                  </div>
+                  <span className="text-sm font-medium text-slate-700">{fabricaLabels[factory as keyof typeof fabricaLabels] || factory}</span>
                   <span className="font-display text-lg font-bold text-slate-900">{count}</span>
                 </div>
               ))}
@@ -104,15 +103,15 @@ export const DashboardView = ({ snapshot }: { snapshot: CrmDataSnapshot }) => {
           </Card>
 
           <Card className="p-5">
-            <h2 className="mb-4 font-display text-base font-bold text-slate-900">Próximas colocaciones</h2>
+            <h2 className="mb-4 font-display text-base font-bold text-slate-900">Proximas colocaciones</h2>
             {nextInstallations.length === 0 ? (
-              <p className="text-sm text-slate-400">Sin colocaciones programadas</p>
+              <p className="text-sm text-slate-400">No hay colocaciones programadas.</p>
             ) : (
               <div className="space-y-2.5">
                 {nextInstallations.map((event) => (
                   <div key={event.id} className="rounded-lg border border-slate-100 bg-slate-50/60 p-3">
-                    <p className="font-semibold text-sm text-slate-900">{event.titulo}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">{formatDate(event.fecha)} · {event.hora}</p>
+                    <p className="text-sm font-semibold text-slate-900">{event.titulo}</p>
+                    <p className="mt-0.5 text-xs text-slate-500">{formatDate(event.fecha)} - {event.hora}</p>
                   </div>
                 ))}
               </div>
@@ -120,31 +119,6 @@ export const DashboardView = ({ snapshot }: { snapshot: CrmDataSnapshot }) => {
           </Card>
         </div>
       </div>
-
-      {/* Flow pipeline */}
-      <Card className="p-5">
-        <h2 className="mb-4 font-display text-base font-bold text-slate-900">Flujo comercial</h2>
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {[
-            { step: "01", label: "Cliente", desc: "Alta y seguimiento" },
-            { step: "02", label: "Presupuesto", desc: "Cotización aprobada" },
-            { step: "03", label: "Trabajo creado", desc: "Orden generada" },
-            { step: "04", label: "Producción", desc: "Aberturas / Cristales" },
-            { step: "05", label: "Listo", desc: "Control aprobado" },
-          ].map((item, i, arr) => (
-            <div key={item.step} className="flex shrink-0 items-center gap-2">
-              <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-center shadow-sm min-w-[120px]">
-                <span className="text-xs font-bold text-brand-600">{item.step}</span>
-                <p className="mt-0.5 font-semibold text-sm text-slate-900">{item.label}</p>
-                <p className="text-[11px] text-slate-400">{item.desc}</p>
-              </div>
-              {i < arr.length - 1 && (
-                <span className="text-brand-300 text-lg font-light">→</span>
-              )}
-            </div>
-          ))}
-        </div>
-      </Card>
     </div>
   );
 };
@@ -152,22 +126,16 @@ export const DashboardView = ({ snapshot }: { snapshot: CrmDataSnapshot }) => {
 const KpiCard = ({
   label,
   value,
-  icon,
   tone = "default",
 }: {
   label: string;
   value: string;
-  icon: string;
   tone?: "default" | "danger" | "success";
 }) => {
   const valueClass = tone === "danger" ? "text-red-600" : tone === "success" ? "text-emerald-600" : "text-slate-900";
-  const iconBg = tone === "danger" ? "bg-red-50 text-red-500" : tone === "success" ? "bg-emerald-50 text-emerald-600" : "bg-brand-50 text-brand-600";
   return (
     <Card className="p-4">
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 leading-tight">{label}</p>
-        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-sm ${iconBg}`}>{icon}</span>
-      </div>
+      <p className="text-[11px] font-semibold uppercase leading-tight tracking-[0.14em] text-slate-400">{label}</p>
       <p className={`mt-3 font-display text-3xl font-bold ${valueClass}`}>{value}</p>
     </Card>
   );
@@ -176,27 +144,22 @@ const KpiCard = ({
 const CashCard = ({
   label,
   value,
-  icon,
   tone,
 }: {
   label: string;
   value: string;
-  icon: string;
   tone: "income" | "expense" | "pending" | "neutral";
 }) => {
-  const colors = {
-    income: { val: "text-emerald-700", bg: "bg-emerald-50", icon: "text-emerald-600" },
-    expense: { val: "text-red-600", bg: "bg-red-50", icon: "text-red-500" },
-    pending: { val: "text-amber-700", bg: "bg-amber-50", icon: "text-amber-600" },
-    neutral: { val: "text-slate-900", bg: "bg-slate-50", icon: "text-slate-500" },
+  const valueClass = {
+    income: "text-emerald-700",
+    expense: "text-red-600",
+    pending: "text-amber-700",
+    neutral: "text-slate-900",
   }[tone];
   return (
     <Card className="p-4">
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 leading-tight">{label}</p>
-        <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-base font-bold ${colors.bg} ${colors.icon}`}>{icon}</span>
-      </div>
-      <p className={`mt-3 font-display text-2xl font-bold ${colors.val}`}>{value}</p>
+      <p className="text-[11px] font-semibold uppercase leading-tight tracking-[0.14em] text-slate-400">{label}</p>
+      <p className={`mt-3 font-display text-2xl font-bold ${valueClass}`}>{value}</p>
     </Card>
   );
 };
